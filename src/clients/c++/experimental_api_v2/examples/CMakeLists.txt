@@ -53,4 +53,21 @@ else()
     )
   
   endif()  # TRTIS_ENABLE_GRPC_V2
+
+  if(${TRTIS_ENABLE_HTTP_V2})
+
+    #
+    # simple_http_v2_health_metadata
+    #
+    add_executable(simple_http_v2_health_metadata simple_http_v2_health_metadata.cc)
+    target_link_libraries(
+      simple_http_v2_health_metadata
+      PRIVATE TRTIS::httpclient_static
+    )
+    install(
+      TARGETS simple_http_v2_health_metadata
+      RUNTIME DESTINATION bin
+    )
+  
+  endif()  # TRTIS_ENABLE_HTTP_V2
 endif() # WIN32
