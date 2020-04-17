@@ -254,20 +254,18 @@ main(int argc, char** argv)
   for (size_t i = 0; i < repeat_cnt; i++) {
     FAIL_IF_ERR(
         client->AsyncInfer(
-            [&, i](nic::InferResult* result, nic::Error* error) {
+            [&, i](nic::InferResult* result) {
               {
                 std::shared_ptr<nic::InferResult> result_ptr;
                 result_ptr.reset(result);
-                std::shared_ptr<nic::Error> error_ptr;
-                error_ptr.reset(error);
                 std::lock_guard<std::mutex> lk(mtx);
                 std::cout << "Callback no." << i << " is called" << std::endl;
                 done_cnt++;
-                if (error_ptr->IsOk()) {
+                if (result_ptr->RequestStatus().IsOk()) {
                   ValidateResult(result_ptr, input0_data, input1_data);
                 } else {
-                  std::cerr << "error: Inference failed: " << *error_ptr
-                            << std::endl;
+                  std::cerr << "error: Inference failed: "
+                            << result_ptr->RequestStatus() << std::endl;
                   exit(1);
                 }
               }
@@ -300,19 +298,15 @@ main(int argc, char** argv)
   // to another thread (main thread) to handle
   bool callback_invoked = false;
   std::shared_ptr<nic::InferResult> result_placeholder;
-  std::shared_ptr<nic::Error> error_placeholder;
   FAIL_IF_ERR(
       client->AsyncInfer(
-          [&](nic::InferResult* result, nic::Error* error) {
+          [&](nic::InferResult* result) {
             {
               std::shared_ptr<nic::InferResult> result_ptr;
               result_ptr.reset(result);
-              std::shared_ptr<nic::Error> error_ptr;
-              error_ptr.reset(error);
               // Defer the response retrieval to main thread
               std::lock_guard<std::mutex> lk(mtx);
               callback_invoked = true;
-              error_placeholder = std::move(error_ptr);
               result_placeholder = std::move(result_ptr);
             }
             cv.notify_all();
@@ -328,10 +322,11 @@ main(int argc, char** argv)
 
   // Get deferred response
   std::cout << "Getting results from deferred response" << std::endl;
-  if (error_placeholder->IsOk()) {
+  if (result_placeholder->RequestStatus().IsOk()) {
     ValidateResult(result_placeholder, input0_data, input1_data);
   } else {
-    std::cerr << "error: Inference failed: " << *error_placeholder << std::endl;
+    std::cerr << "error: Inference failed: "
+              << result_placeholder->RequestStatus() << std::endl;
     exit(1);
   }
 
