@@ -246,7 +246,8 @@ main(int argc, char** argv)
   std::cout << results_ptr->DebugString() << std::endl;
 
   nic::InferStat infer_stat;
-  client->GetInferStat(&infer_stat);
+  client->ClientInferStat(&infer_stat);
+  std::cout << "======Client Statistics======" << std::endl;
   std::cout << "completed_request_count " << infer_stat.completed_request_count
             << std::endl;
   std::cout << "cumulative_total_request_time_ns "
@@ -255,6 +256,12 @@ main(int argc, char** argv)
             << std::endl;
   std::cout << "cumulative_receive_time_ns "
             << infer_stat.cumulative_receive_time_ns << std::endl;
+
+  ni::ModelStatisticsResponse model_stat;
+  client->ModelInferenceStatistics(&model_stat, model_name);
+  std::cout << "======Model Statistics======" << std::endl;
+  std::cout << model_stat.DebugString() << std::endl;
+
 
   std::cout << "PASS : Infer" << std::endl;
 
