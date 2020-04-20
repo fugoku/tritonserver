@@ -204,7 +204,7 @@ main(int argc, char** argv)
   int32_t* output0_data;
   size_t output0_byte_size;
   FAIL_IF_ERR(
-      results->RawData(
+      results_ptr->RawData(
           "OUTPUT0", (const uint8_t**)&output0_data, &output0_byte_size),
       "unable to get datatype for OUTPUT0");
   if (output0_byte_size != 64) {
@@ -216,7 +216,7 @@ main(int argc, char** argv)
   int32_t* output1_data;
   size_t output1_byte_size;
   FAIL_IF_ERR(
-      results->RawData(
+      results_ptr->RawData(
           "OUTPUT1", (const uint8_t**)&output1_data, &output1_byte_size),
       "unable to get datatype for OUTPUT1");
   if (output0_byte_size != 64) {
@@ -242,10 +242,11 @@ main(int argc, char** argv)
   }
 
   // Get full response
-  std::cout << results->DebugString() << std::endl;
+  std::cout << results_ptr->DebugString() << std::endl;
 
   nic::InferStat infer_stat;
   client->ClientInferStat(&infer_stat);
+  std::cout << "======Client Statistics======" << std::endl;
   std::cout << "completed_request_count " << infer_stat.completed_request_count
             << std::endl;
   std::cout << "cumulative_total_request_time_ns "
@@ -254,6 +255,11 @@ main(int argc, char** argv)
             << std::endl;
   std::cout << "cumulative_receive_time_ns "
             << infer_stat.cumulative_receive_time_ns << std::endl;
+
+  rapidjson::Document model_stat;
+  client->ModelInferenceStatistics(&model_stat, model_name);
+  std::cout << "======Model Statistics======" << std::endl;
+  std::cout << nic::GetJsonText(model_stat) << std::endl;
 
   std::cout << "PASS : Infer" << std::endl;
 
