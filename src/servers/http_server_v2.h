@@ -39,8 +39,7 @@ class HTTPServerV2 {
  public:
   static TRITONSERVER_Error* CreateAPIServer(
       const std::shared_ptr<TRITONSERVER_Server>& server,
-      const std::shared_ptr<nvidia::inferenceserver::TraceManager>&
-          trace_manager,
+      nvidia::inferenceserver::TraceManager* trace_manager,
       const std::shared_ptr<SharedMemoryManager>& smb_manager,
       const std::map<int32_t, std::vector<std::string>>& port_map,
       const int thread_cnt,
