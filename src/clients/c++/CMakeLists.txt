@@ -33,6 +33,7 @@ add_subdirectory(api_v1/examples)
 if(TRTIS_ENABLE_GRPC_V2 OR TRTIS_ENABLE_HTTP_V2)
     add_subdirectory(experimental_api_v2/library)
     add_subdirectory(experimental_api_v2/examples)
+    add_subdirectory(experimental_api_v2/perf_client)
 endif()
 
 add_subdirectory(perf_client)
