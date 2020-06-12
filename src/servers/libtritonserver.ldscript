@@ -26,5 +26,6 @@
 {
   global:
     TRITONSERVER_*;
+    TRITONBACKEND_*;
   local: *;
 };
