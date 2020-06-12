@@ -47,18 +47,29 @@ class TritonModel : public InferenceBackend {
       const std::string& model_repository_path, const std::string& model_name,
       const int64_t version, const ModelConfig& model_config,
       const double min_compute_capability, std::unique_ptr<TritonModel>* model);
+  ~TritonModel();
+
+  const std::string& ModelPath() const { return model_path_; }
+  const std::shared_ptr<TritonBackend>& Backend() const { return backend_; }
+  void* State() { return state_; }
+  void SetState(void* state) { state_ = state; }
 
  private:
   DISALLOW_COPY_AND_ASSIGN(TritonModel);
 
   TritonModel(
+      const std::string& model_path,
       const std::shared_ptr<TritonBackend>& backend,
-      const double min_compute_capability)
-      : InferenceBackend(min_compute_capability), backend_(backend)
-  {
-  }
+      const double min_compute_capability);
 
+  // Full path to the repo directory holding the model
+  const std::string model_path_;
+
+  // Backend used by this model.
   std::shared_ptr<TritonBackend> backend_;
+
+  // Opaque state associated with the backend.
+  void* state_;
 };
 
 }}  // namespace nvidia::inferenceserver
