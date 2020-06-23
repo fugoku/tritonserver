@@ -53,7 +53,28 @@ set_target_properties(
   PROPERTIES LINK_FLAGS "-Wl,--version-script libtriton_identity.ldscript"
 )
 
+#
+# libtriton_identity.so
+#
+configure_file(libtriton_repeat.ldscript libtriton_repeat.ldscript COPYONLY)
+
+add_library(
+  triton_repeat SHARED
+  repeat.cc
+  $<TARGET_OBJECTS:backend-utils-library>
+)
+set_target_properties(
+  triton_repeat
+  PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/libtriton_repeat.ldscript
+)
+set_target_properties(
+  triton_repeat
+  PROPERTIES LINK_FLAGS "-Wl,--version-script libtriton_repeat.ldscript"
+)
+
 install(
-  TARGETS triton_identity
+  TARGETS
+    triton_identity
+    triton_repeat
   LIBRARY DESTINATION backends
 )
