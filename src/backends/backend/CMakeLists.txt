@@ -62,9 +62,12 @@ if(${TRITON_ENABLE_METRICS})
 endif() # TRITON_ENABLE_METRICS
 
 add_subdirectory(examples src/backends/backend/examples)
+if(${TRITON_ENABLE_ONNXRUNTIME})
+  add_subdirectory(onnxruntime src/backends/backend/onnxruntime)
+endif() # TRITON_ENABLE_ONNXRUNTIME
 if(${TRITON_ENABLE_TENSORFLOW})
-add_subdirectory(tensorflow src/backends/backend/tensorflow)
+  add_subdirectory(tensorflow src/backends/backend/tensorflow)
 endif() # TRITON_ENABLE_TENSORFLOW
 if(${TRITON_ENABLE_PYTHON})
-add_subdirectory(python src/backends/backend/python)
+  add_subdirectory(python src/backends/backend/python)
 endif() # TRITON_ENABLE_PYTHON
