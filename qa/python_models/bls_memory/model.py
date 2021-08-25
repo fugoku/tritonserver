@@ -38,11 +38,11 @@ class PBBLSMemoryTest(unittest.TestCase):
             model_name='identity_fp32',
             inputs=[input0],
             requested_output_names=['OUTPUT0'])
-        return infer_request.exec()
+        return input0_np, infer_request.exec()
 
     def test_bls_out_of_memory(self):
         tensor_size = 1024 * 1024 * 1024
-        infer_response = self._send_identity_tensor(tensor_size)
+        input0_np, infer_response = self._send_identity_tensor(tensor_size)
         out_of_memory_message = "Failed to increase the shared memory pool size for key"
 
         if infer_response.has_error():
@@ -55,9 +55,9 @@ class PBBLSMemoryTest(unittest.TestCase):
             self.assertIsNotNone(output0)
             self.assertTrue(np.allclose(output0.as_numpy(), input0_np))
 
-        tensor_size = 256 * 1024 * 1024
+        tensor_size = 50 * 1024 * 1024
         for _ in range(4):
-            infer_response = self._send_identity_tensor(tensor_size)
+            input0_np, infer_response = self._send_identity_tensor(tensor_size)
             if infer_response.has_error():
                 self.assertIn(out_of_memory_message,
                               infer_response.error().message())
