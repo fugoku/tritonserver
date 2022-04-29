@@ -26,7 +26,7 @@
 
 CLIENT_PY=./decoupled_test.py
 CLIENT_LOG="./client.log"
-EXPECTED_NUM_TESTS="3"
+EXPECTED_NUM_TESTS="4"
 TEST_RESULT_FILE='test_results.txt'
 TRITON_DIR=${TRITON_DIR:="/opt/tritonserver"}
 SERVER=${TRITON_DIR}/bin/tritonserver
@@ -38,6 +38,9 @@ RET=0
 source ../../common/util.sh
 
 rm -fr *.log
+mkdir -p models/identity_fp32/1/
+cp ../../python_models/identity_fp32/model.py models/identity_fp32/1/
+cp ../../python_models/identity_fp32/config.pbtxt models/identity_fp32/
 
 run_server
 if [ "$SERVER_PID" == "0" ]; then
